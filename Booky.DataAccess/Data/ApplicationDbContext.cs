@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Booky.Data
+namespace Booky.DataAccess.Data
 {
     public class ApplicationDbContext:DbContext
     {

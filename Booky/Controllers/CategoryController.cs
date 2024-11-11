@@ -1,4 +1,4 @@
-﻿using Booky.Data;
+﻿using Booky.DataAccess.Data;
 using Booky.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;

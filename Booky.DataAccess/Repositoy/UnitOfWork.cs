@@ -12,10 +12,14 @@ namespace Booky.DataAccess.Repositoy
     {
         private readonly ApplicationDbContext _DbContext;
         public ICategoryRepositoy Category { get; private set; }
+
+        public IProductRepository Product { get; private set; }
+
         public UnitOfWork(ApplicationDbContext dbContext)
         {
             _DbContext = dbContext;
             Category = new CategoryRepository(_DbContext);
+            Product = new ProductRepository(_DbContext);
         }
 
 

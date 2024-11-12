@@ -1,6 +1,5 @@
 ﻿using Booky.DataAccess.Data;
 using Booky.DataAccess.Repositoy.IRepository;
-using Booky.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +8,20 @@ using System.Threading.Tasks;
 
 namespace Booky.DataAccess.Repositoy
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepositoy
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _DbContext;
-        public CategoryRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public ICategoryRepositoy Category { get; private set; }
+        public UnitOfWork(ApplicationDbContext dbContext)
         {
             _DbContext = dbContext;
+            Category = new CategoryRepository(_DbContext);
         }
 
-        public void Update(Category obj)
+
+        public int Save()
         {
-            _DbContext.Categories.Update(obj);
+            return _DbContext.SaveChanges();
         }
     }
 }

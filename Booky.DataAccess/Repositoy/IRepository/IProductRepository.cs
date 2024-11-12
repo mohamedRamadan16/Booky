@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Booky.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Booky.DataAccess.Repositoy.IRepository
 {
-    public interface IUnitOfWork
+    public interface IProductRepository:IRepository<Product>
     {
-        ICategoryRepositoy Category { get; }
-        IProductRepository Product { get; }
-        int Save();
+        void Update(Product obj);
     }
 }

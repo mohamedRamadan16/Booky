@@ -1,20 +1,23 @@
 ﻿using Booky.DataAccess.Data;
+using Booky.DataAccess.Repositoy.IRepository;
 using Booky.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace Booky.Controllers
+namespace Booky.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext DbContext;
-        public CategoryController(ApplicationDbContext _DbContext)
+        private readonly IUnitOfWork unitOfWork;
+        // here in the ctor you ask the DI to inject a service that implements the ICategoryRepository
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            DbContext = _DbContext;
+            this.unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            List<Category> categories = DbContext.Categories.ToList();
+            IEnumerable<Category> categories = unitOfWork.Category.GetAll();
             return View(categories);
         }
 
@@ -40,10 +43,10 @@ namespace Booky.Controllers
             }
 
 
-            DbContext.Categories.Add(category);
-            DbContext.SaveChanges();
+            unitOfWork.Category.Add(category);
+            unitOfWork.Save();
             TempData["success"] = "Category Created Successfully";
-            return RedirectToAction("Index");   
+            return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int? Id)
@@ -51,7 +54,7 @@ namespace Booky.Controllers
             if (Id == null || Id == 0)
                 return NotFound();
 
-            Category? category = DbContext.Categories.FirstOrDefault(c => c.Id == Id);
+            Category? category = unitOfWork.Category.Get(c => c.Id == Id);
             if (category == null)
             {
                 return RedirectToAction("Index");
@@ -75,8 +78,8 @@ namespace Booky.Controllers
                 return View("Edit", category);
             }
 
-            DbContext.Categories.Update(category);
-            DbContext.SaveChanges();
+            unitOfWork.Category.Update(category);
+            unitOfWork.Save();
             TempData["success"] = "Category Updated Successfully";
             return RedirectToAction("Index");
         }
@@ -84,8 +87,8 @@ namespace Booky.Controllers
 
         public IActionResult Delete(int Id)
         {
-            Category? category = DbContext.Categories.FirstOrDefault(c => c.Id == Id);
-            if(category == null)
+            Category? category = unitOfWork.Category.Get(c => c.Id == Id);
+            if (category == null)
             {
                 return RedirectToAction("Index");
             }
@@ -98,12 +101,12 @@ namespace Booky.Controllers
         {
             if (ModelState.IsValid)
             {
-                DbContext.Categories.Remove(category);
-                DbContext.SaveChanges();
+                unitOfWork.Category.Remove(category);
+                unitOfWork.Save();
                 TempData["success"] = "Category Deleted Successfully";
                 return RedirectToAction("Index");
             }
-            return View("Delete" ,category);
+            return View("Delete", category);
         }
     }
 }

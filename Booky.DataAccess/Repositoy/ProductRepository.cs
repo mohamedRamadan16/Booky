@@ -18,7 +18,24 @@ namespace Booky.DataAccess.Repositoy
         }
         public void Update(Product obj)
         {
-            _db.Products.Update(obj);
+            // Manual mapping with custome logic for the image url 
+            var objFromDb = _db.Products.FirstOrDefault(p => p.Id == obj.Id);
+            if(objFromDb != null)
+            {
+                objFromDb.Title = obj.Title;
+                objFromDb.Author = obj.Author;
+                objFromDb.ISBN = obj.ISBN;
+                objFromDb.Description = obj.Description;
+                objFromDb.CategoryId = obj.CategoryId;
+                objFromDb.ListPrice = obj.ListPrice;
+                objFromDb.Price = obj.Price;
+                objFromDb.Price50 = obj.Price50;
+                objFromDb.Price100 = obj.Price100;
+                if (obj.ImageUrl != null)
+                {
+                    objFromDb.ImageUrl = obj.ImageUrl;
+                }
+            }
         }
     }
 }

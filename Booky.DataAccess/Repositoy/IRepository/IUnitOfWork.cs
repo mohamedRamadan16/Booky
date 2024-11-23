@@ -10,6 +10,7 @@ namespace Booky.DataAccess.Repositoy.IRepository
     {
         ICategoryRepositoy Category { get; }
         IProductRepository Product { get; }
+        ICompanyRepositoy Company { get; }
         int Save();
     }
 }

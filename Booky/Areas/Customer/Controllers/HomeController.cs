@@ -1,8 +1,10 @@
 using Booky.DataAccess.Repositoy;
 using Booky.DataAccess.Repositoy.IRepository;
 using Booky.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Booky.Areas.Customer.Controllers
 {
@@ -26,14 +28,38 @@ namespace Booky.Areas.Customer.Controllers
 
         public IActionResult Details(int id)
         {
-            Product product = _unitOfWork.Product.Get(p => p.Id == id, includeProperties:"Category");
-            if (product == null)
+            ShoppingCart cart = new ShoppingCart()
             {
-                return RedirectToAction("Index");
-            }
-            return View(product);
+                Product = _unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category"),
+                Count = 1,
+                ProductId = id
+            };
+            return View(cart);
         }
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            shoppingCart.Id = 0;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserId = userId;
 
+            // cecking if a user has already this item in his cart before
+            ShoppingCart CartFromDb = _unitOfWork.ShoppingCart.Get(s => s.ApplicationUserId == userId && s.ProductId == shoppingCart.ProductId);
+            if(CartFromDb == null)
+            {
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+            else
+            {
+                CartFromDb.Count += shoppingCart.Count;
+                _unitOfWork.ShoppingCart.Update(CartFromDb);
+            }
+            _unitOfWork.Save();
+            TempData["success"] = "Cart Updated Successfully";
+            return RedirectToAction("Index");
+        }
         public IActionResult Privacy()
         {
             return View();

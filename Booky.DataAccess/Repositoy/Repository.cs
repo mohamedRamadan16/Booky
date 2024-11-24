@@ -26,7 +26,7 @@ namespace Booky.DataAccess.Repositoy
             _dbSet.Add(item);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
             IQueryable<T> query;
             query = _dbSet;
@@ -38,10 +38,14 @@ namespace Booky.DataAccess.Repositoy
                     query = query.Include(property);
                 }
             }
+            if (!tracked)
+            {
+                query = query.AsNoTracking();
+            }
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, string? includeProperties = null, bool tracked = false)
         {
             IQueryable<T> query;
             query = _dbSet;
@@ -52,7 +56,11 @@ namespace Booky.DataAccess.Repositoy
                     query = query.Include(property);
                 }
             }
-            return query.ToList();
+            if(filter == null)
+            {
+                return query.ToList();
+            }
+            return query.Where(filter).ToList();
         }
 
         public void Remove(T item)

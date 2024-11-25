@@ -20,6 +20,10 @@ namespace Booky.DataAccess.Repositoy
         public IShoppingCartRepositoy ShoppingCart { get; private set; }
         public IApplicationUserRepositoy ApplicationUser { get; private set; }
 
+        public IOrderHeaderRepositoy OrderHeader { get; private set; }
+
+        public IOrderDetailRepositoy OrderDetail { get; private set; }
+
         public UnitOfWork(ApplicationDbContext dbContext)
         {
             _DbContext = dbContext;
@@ -28,6 +32,8 @@ namespace Booky.DataAccess.Repositoy
             Company = new CompanyRepository(_DbContext);
             ShoppingCart = new ShoppingCartRepository(_DbContext);
             ApplicationUser = new ApplicationUserRepository(_DbContext);
+            OrderHeader = new OrderHeaderRepository(_DbContext);
+            OrderDetail = new OrderDetailRepository(_DbContext);
         }
 
 

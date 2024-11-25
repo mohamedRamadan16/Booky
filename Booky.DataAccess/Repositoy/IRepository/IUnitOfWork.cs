@@ -13,6 +13,8 @@ namespace Booky.DataAccess.Repositoy.IRepository
         ICompanyRepositoy Company { get; }
         IShoppingCartRepositoy ShoppingCart { get; }
         IApplicationUserRepositoy ApplicationUser { get; }
+        IOrderHeaderRepositoy OrderHeader { get; }
+        IOrderDetailRepositoy OrderDetail { get; }
         int Save();
     }
 }
